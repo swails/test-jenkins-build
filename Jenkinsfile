@@ -7,19 +7,23 @@ pipeline {
                 script {
                     // Put stuff in here
                     def build = currentBuild
-
-                    echo "There are ${build.changeSets.size()} changeSets"
-                    build.changeSets.each { cs ->
-                        echo "Inspecting changeSet ${cs}"
-                        echo "cs affectedFiles = ${cs.getAffectedFiles()}"
-
-                        cs.getAffectedFiles().each {
-                            echo "Affected file ${it}"
-                            echo "Affected file at ${it.getPath()}"
-                        }
-                    }
+                    analyzeBuild(build)
+                    analyzeBuild(build.previousBuild)
                 }
             }
+        }
+    }
+}
+
+def analyzeBuild(def build) {
+    echo "There are ${build.changeSets.size()} changeSets in build ${build.number}"
+    build.changeSets.each { cs ->
+        echo "Inspecting changeSet ${cs}"
+        echo "cs affectedFiles = ${cs.getAffectedFiles()}"
+
+        cs.getAffectedFiles().each {
+            echo "Affected file ${it}"
+            echo "Affected file at ${it.getPath()}"
         }
     }
 }
